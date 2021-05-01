@@ -91,22 +91,26 @@ int main(int argc, const char *argv[])
     // Single Channel
     setlidaropt(laser, LidarPropSingleChannel, &b_optval, sizeof(bool));
     // Intensity
+    b_optval = true;
     setlidaropt(laser, LidarPropIntenstiy, &b_optval, sizeof(bool));
     // Counter clocwise rotation
+    b_optval = false;
     setlidaropt(laser, LidarPropInverted, &b_optval, sizeof(bool));
     // Rotate 180 (reverse 0 deggre point ???)
     setlidaropt(laser, LidarPropReversion, &b_optval, sizeof(bool));
     // Motor DTR control
     setlidaropt(laser, LidarPropSupportMotorDtrCtrl, &b_optval, sizeof(bool));
     // Fixed angle resolution
+    b_optval = true;
     setlidaropt(laser, LidarPropFixedResolution, &b_optval, sizeof(bool));
     // Heartbeat
+    b_optval = false;
     setlidaropt(laser, LidarPropSupportHeartBeat, &b_optval, sizeof(bool));
 
     // Set Lidar float property paramters. //
 
     // Scan Frequency (Hz) [5(7)12]
-    float f_optval = 12.0f;
+    float f_optval = 5.0f;
     setlidaropt(laser, LidarPropScanFrequency, &f_optval, sizeof(float));
     // Maxiumum angle (°)
     f_optval = 180.0f;
@@ -115,7 +119,7 @@ int main(int argc, const char *argv[])
     f_optval = -180.0f;
     setlidaropt(laser, LidarPropMinAngle, &f_optval, sizeof(float));
     // Maximum Range (m)
-    f_optval = 16.f;
+    f_optval = 12.f;
     setlidaropt(laser, LidarPropMaxRange, &f_optval, sizeof(float));
     // Minimum Range (m)
     f_optval = 0.12f;
@@ -192,9 +196,19 @@ int main(int argc, const char *argv[])
     {
         if (doProcessSimple(laser, &scan))
         {
-            fprintf(stdout, "Scan received[%lu]: %u ranges is [%f]Hz\n",
-                    scan.stamp,
-                    (unsigned int)scan.npoints, 1.0 / scan.config.scan_time);
+            // fprintf(stdout, "Scan received[%lu]: %u ranges is [%f]Hz\n",
+            //         scan.stamp,
+            //         (unsigned int)scan.npoints, 1.0 / scan.config.scan_time);
+            float range = 0.0;
+            for (unsigned int p_index = 0; p_index <= 10; p_index++)
+            {
+                LaserPoint aPoint = scan.points[p_index];
+                range = (float)aPoint.range;
+                // if (range < 0.190f)
+                {
+                    fprintf(stdout, "Point : %f\n", range);
+                }
+            }
             fflush(stdout);
         }
         else
